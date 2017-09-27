@@ -1,11 +1,12 @@
 import random
 
+
 def straight_insertion(list_to_sort):
 
     n = len(list_to_sort)
     list_to_sort.append(0)
 
-    for i in xrange(0, n):
+    for i in xrange(n - 2, -1, -1):
 
         x = list_to_sort[-1] = list_to_sort[i]
 
@@ -17,6 +18,8 @@ def straight_insertion(list_to_sort):
             j += 1
 
         list_to_sort[j] = x
+
+    list_to_sort.pop()
 
 
 def unorder_range(range_size):
@@ -35,13 +38,19 @@ def create_list_to_sort(list_size):
 
 if __name__ == '__main__':
 
-    list_size = []
+    # list_size = []
+    #
+    # list_to_sort = \
+    #     [
+    #         # 'ordered':
+    #     ]
+    #
+    # sorting = [straight_insertion]
+    #
+    # # TO BE CONTINUED...
 
-    list_to_sort = \
-        [
-            # 'ordered':
-        ]
+    list_to_sort = [4, 1, 3, 19, 0]
 
-    sorting = [straight_insertion]
+    straight_insertion(list_to_sort)
 
-    # TO BE CONTINUED...
+    print list_to_sort
