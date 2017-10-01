@@ -1,4 +1,6 @@
-import random
+import math
+
+from sorting_tester import SortingTester
 
 
 def straight_insertion(list_to_sort):
@@ -21,36 +23,60 @@ def straight_insertion(list_to_sort):
 
     list_to_sort.pop()
 
+    return list_to_sort
 
-def unorder_range(range_size):
 
-    init_list = range(0, range_size)
+def binary_insertion(list_to_sort):
 
-    return [init_list.pop(int((range_size - i) * random.random())) for i in xrange(0, range_size)]
+    n = len(list_to_sort)
 
-def create_list_to_sort(list_size):
+    for i in xrange(n - 2, -1, -1):
 
-    return {
-        'ordered': range(0, list_size),
-        'inverted': range(list_size - 1, -1),
-        'random': [int(list_size * random.random()) for i in xrange(list_size)]
-    }
+        x = list_to_sort[i]
+        l = i
+        r = n - 1
+
+        while l < r:
+
+            m = -((l + r) / -2)
+
+            if list_to_sort[m] <= x:
+
+                l = m
+
+            else:
+
+                r = m - 1
+
+        for j in xrange(i, r):
+
+            list_to_sort[j] = list_to_sort[j + 1]
+
+        list_to_sort[r] = x
+
+    return list_to_sort
+
 
 if __name__ == '__main__':
 
-    # list_size = []
-    #
-    # list_to_sort = \
-    #     [
-    #         # 'ordered':
-    #     ]
-    #
-    # sorting = [straight_insertion]
-    #
-    # # TO BE CONTINUED...
+    tester = SortingTester(min_len_log_10=2, max_len_log_10=3)
 
-    list_to_sort = [4, 1, 3, 19, 0]
+    tester.run([
+        ('straight_insertion', straight_insertion),
+        ('binary_insertion', binary_insertion)
+    ])
 
-    straight_insertion(list_to_sort)
+    tester.print_results()
 
-    print list_to_sort
+    # list_to_sort = SortingTester.unorder_range(10, 10)
+    #
+    # print binary_insertion(list_to_sort)
+
+
+
+
+
+
+
+
+
