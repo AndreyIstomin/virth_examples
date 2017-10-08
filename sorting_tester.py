@@ -17,13 +17,12 @@ class SortingTester:
 
     DEFAULT_RELATIVE_CLUSTER_SIZE = 0.1
 
-    def __init__(self, min_len_log_10, max_len_log_10, rel_cluster_size = DEFAULT_RELATIVE_CLUSTER_SIZE):
+    def __init__(self, min_len_log_2, max_len_log_2, rel_cluster_size = DEFAULT_RELATIVE_CLUSTER_SIZE):
 
-        t = pow(10, min_len_log_10 - 1)
         self.__testLength = []
 
-        for i in xrange(0, max_len_log_10 - min_len_log_10 + 1):
-            t *= 10
+        for i in xrange(min_len_log_2, max_len_log_2 + 1):
+            t = 1 << i
             self.__testLength.append(t)
 
         self.__results = []
@@ -105,15 +104,16 @@ class SortingTester:
 
             for case_name, cur_test_list in test_list:
 
-                for sort_name, sort in sorting_list:
+                for sort in sorting_list:
                     list_to_sort = list(cur_test_list)
                     t = time.time()
                     sort(list_to_sort)
                     t = time.time() - t
 
-                    SortingTester.check_sequence(list_to_sort, sort_name)
+                    SortingTester.check_sequence(list_to_sort, sort.__name__)
 
-                    self.__results.append(SortingTester.RESULT_DESCRIPTOR(len(cur_test_list), case_name, sort_name, t))
+                    self.__results.append(
+                        SortingTester.RESULT_DESCRIPTOR(len(cur_test_list), case_name, sort.__name__, t))
 
     def print_results(self):
 
