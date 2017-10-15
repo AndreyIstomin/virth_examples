@@ -1,5 +1,6 @@
 import random
 import time
+import pyodbc
 from collections import namedtuple
 
 
@@ -13,7 +14,7 @@ class SortingTester:
         def __str__(self):
             return 'sorting %s has error' % self.__sortName
 
-    RESULT_DESCRIPTOR = namedtuple('RESULT_DESCRIPTOR', 'arr_len, case_name, sort_name, time')
+    RESULT_DESCRIPTOR = namedtuple('RESULT_DESCRIPTOR', 'arr_len, order_degree, case_name, sort_name, time')
 
     DEFAULT_RELATIVE_CLUSTER_SIZE = 0.1
 
@@ -71,19 +72,22 @@ class SortingTester:
     @staticmethod
     def create_list_to_sort(list_size, rel_cluster_size):
 
+        class NullValue:
+            __repr__ = lambda self: "NULL"
+
         return [
-            ('ordered', range(0, list_size)),
-            ('unordered_0.2', SortingTester.partly_unorder_list(range(0, list_size), 0.2)),
-            ('unordered_0.4', SortingTester.partly_unorder_list(range(0, list_size), 0.4)),
-            ('unordered_0.6', SortingTester.partly_unorder_list(range(0, list_size), 0.6)),
-            ('unordered_0.8', SortingTester.partly_unorder_list(range(0, list_size), 0.8)),
-            ('unordered', SortingTester.unorder_range(list_size, list_size)),
-            ('invert_unordered_0.8', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.8)),
-            ('invert_unordered_0.6', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.6)),
-            ('invert_unordered_0.4', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.4)),
-            ('invert_unordered_0.2', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.2)),
-            ('inverted', range(list_size - 1, -1, -1)),
-            ('cluster_unordered', SortingTester.cluster_unorder(1, max(1, int(list_size * rel_cluster_size)), list_size))
+            (1.0, 'ordered', range(0, list_size)),
+            (0.8, 'unordered_0.2', SortingTester.partly_unorder_list(range(0, list_size), 0.2)),
+            (0.6, 'unordered_0.4', SortingTester.partly_unorder_list(range(0, list_size), 0.4)),
+            (0.4, 'unordered_0.6', SortingTester.partly_unorder_list(range(0, list_size), 0.6)),
+            (0.2, 'unordered_0.8', SortingTester.partly_unorder_list(range(0, list_size), 0.8)),
+            (0.0, 'unordered', SortingTester.unorder_range(list_size, list_size)),
+            (-0.2, 'invert_unordered_0.8', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.8)),
+            (-0.4, 'invert_unordered_0.6', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.6)),
+            (-0.6, 'invert_unordered_0.4', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.4)),
+            (-0.8, 'invert_unordered_0.2', SortingTester.partly_unorder_list(range(list_size - 1, -1, -1), 0.2)),
+            (-1.0, 'inverted', range(list_size - 1, -1, -1)),
+            (NullValue(), 'cluster_unordered', SortingTester.cluster_unorder(1, max(1, int(list_size * rel_cluster_size)), list_size))
         ]
 
     @staticmethod
@@ -102,7 +106,7 @@ class SortingTester:
 
             test_list = SortingTester.create_list_to_sort(test_length, self.__relativeClusterSize)
 
-            for case_name, cur_test_list in test_list:
+            for order_degree, case_name, cur_test_list in test_list:
 
                 for sort in sorting_list:
                     list_to_sort = list(cur_test_list)
@@ -113,7 +117,7 @@ class SortingTester:
                     SortingTester.check_sequence(list_to_sort, sort.__name__)
 
                     self.__results.append(
-                        SortingTester.RESULT_DESCRIPTOR(len(cur_test_list), case_name, sort.__name__, t))
+                        SortingTester.RESULT_DESCRIPTOR(len(cur_test_list), order_degree, case_name, sort.__name__, t))
 
     def print_results(self):
 
@@ -144,4 +148,29 @@ class SortingTester:
                 print("______________________size = %6d______________________" % cur_size)
 
             case_results.append(result)
+
+    def csv_to_file(self, path):
+
+        with open(path, "w") as f:
+
+                f.writelines(("".join([str(list(result)).strip("[]"), "\n"]) for result in self.__results))
+
+    def write_to_db(self, db_path):
+
+        conn = pyodbc.connect(
+            "Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=%s" % db_path)
+
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM sorting_result")
+
+        for insert_sql in ("INSERT INTO sorting_result (array_size, order_degree, case_name, sort_name, compute_time)" \
+                           " VALUES (%s);" % str(list(result)).strip("[]") for result in self.__results):
+            cursor.execute(insert_sql)
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+
 

@@ -1,4 +1,5 @@
 import math
+from collections import namedtuple
 
 from sorting_tester import SortingTester
 
@@ -211,9 +212,92 @@ def heap_sort(list_to_sort):
     return list_to_sort
 
 
+def quick_sort(list_to_sort):
+
+    def sort(l, r):
+
+        i = l
+        j = r
+        x = list_to_sort[(l + r) / 2]
+
+        while i <= j:
+
+            # search for the first element greater or equal then x
+            while list_to_sort[i] < x:
+                i += 1
+
+            # search for the first from right element less or equal then x
+            while list_to_sort[j] > x:
+                j -= 1
+
+            if i <= j:
+
+                swap = list_to_sort[i]
+                list_to_sort[i] = list_to_sort[j]
+                list_to_sort[j] = swap
+                i += 1
+                j -= 1
+
+        if l < j:
+            sort(l, j)
+
+        if i < r:
+            sort(i, r)
+
+    sort(0, len(list_to_sort) - 1)
+
+    return list_to_sort
+
+
+def quick_sort_non_recursive(list_to_sort):
+
+    stack = [(0, len(list_to_sort) - 1)]
+
+    while len(stack) > 0:
+
+        (l, r) = stack.pop()
+
+        while l < r:
+            i = l
+            j = r
+            x = list_to_sort[(l + r)/2]
+
+            while i <= j:
+
+                while list_to_sort[i] < x:
+                    i += 1
+                while list_to_sort[j] > x:
+                    j -= 1
+
+                if i <= j:
+                    swap = list_to_sort[i]
+                    list_to_sort[i] = list_to_sort[j]
+                    list_to_sort[j] = swap
+                    i += 1
+                    j -= 1
+            # Choose the shortest sort interval
+            if j - l < r - i:
+                if i < r:
+                    # Will be done later
+                    stack.append((i, r))
+                r = j
+            else:
+                if j > l:
+                    stack.append((l, j))
+                l = i
+
+
+def built_in_sort(list_to_sort):
+
+    list_to_sort.sort()
+    return list_to_sort
+
+
 if __name__ == '__main__':
 
-    tester = SortingTester(min_len_log_2=12, max_len_log_2=13)
+    import os
+
+    tester = SortingTester(min_len_log_2=10, max_len_log_2=13)
 
     tester.run([
         straight_insertion,
@@ -222,14 +306,15 @@ if __name__ == '__main__':
         bubble_sort,
         shaker_sort,
         shell_sort_9531,
-        heap_sort
+        heap_sort,
+        quick_sort,
+        quick_sort_non_recursive,
+        built_in_sort
     ])
 
-    tester.print_results()
-
-    # list_to_sort = SortingTester.unorder_range(20, 20)
-    #
-    # print heap_sort(list_to_sort)
+    # # tester.print_results()
+    # tester.csv_to_file("d:/sort_results.csv")
+    tester.write_to_db(os.path.dirname(__file__) + "/result_db.accdb")
 
 
 
