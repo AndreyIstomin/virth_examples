@@ -9,7 +9,7 @@ def straight_insertion(list_to_sort):
     n = len(list_to_sort)
     list_to_sort.append(0)
 
-    for i in xrange(n - 2, -1, -1):
+    for i in range(n - 2, -1, -1):
 
         x = list_to_sort[-1] = list_to_sort[i]
 
@@ -31,7 +31,7 @@ def binary_insertion(list_to_sort):
 
     n = len(list_to_sort)
 
-    for i in xrange(n - 2, -1, -1):
+    for i in range(n - 2, -1, -1):
 
         x = list_to_sort[i]
         l = i
@@ -39,7 +39,7 @@ def binary_insertion(list_to_sort):
 
         while l < r:
 
-            m = -((l + r) / -2)
+            m = -((l + r) // -2)
 
             if list_to_sort[m] <= x:
 
@@ -49,7 +49,7 @@ def binary_insertion(list_to_sort):
 
                 r = m - 1
 
-        for j in xrange(i, r):
+        for j in range(i, r):
 
             list_to_sort[j] = list_to_sort[j + 1]
 
@@ -62,12 +62,12 @@ def straight_selection(list_to_sort):
 
     n = len(list_to_sort)
 
-    for i in xrange(0, n - 1):
+    for i in range(0, n - 1):
 
         k = i
         x = list_to_sort[i]
 
-        for j in xrange(i + 1, n):
+        for j in range(i + 1, n):
 
             if list_to_sort[j] < x:
 
@@ -84,8 +84,8 @@ def bubble_sort(list_to_sort):
 
     n = len(list_to_sort)
 
-    for i in xrange(1, n):
-        for j in xrange(n - 1, i - 1, -1):
+    for i in range(1, n):
+        for j in range(n - 1, i - 1, -1):
 
             if list_to_sort[j - 1] > list_to_sort[j]:
                 x = list_to_sort[j - 1]
@@ -105,7 +105,7 @@ def shaker_sort(list_to_sort):
 
     while l <= r:
 
-        for j in xrange(r, l - 1, -1):
+        for j in range(r, l - 1, -1):
 
             if list_to_sort[j - 1] > list_to_sort[j]:
 
@@ -116,7 +116,7 @@ def shaker_sort(list_to_sort):
 
         l = k + 1
 
-        for j in xrange(l, r + 1):
+        for j in range(l, r + 1):
 
             if list_to_sort[j - 1] > list_to_sort[j]:
 
@@ -142,7 +142,7 @@ def shell_sort_9531(list_to_sort):
 
         barrier_shift = step
 
-        for i in xrange(n - 1 - step, -1, -1):
+        for i in range(n - 1 - step, -1, -1):
 
             x = list_to_sort[n - 1 + barrier_shift] = list_to_sort[i]  # barrier
 
@@ -158,17 +158,17 @@ def shell_sort_9531(list_to_sort):
             if barrier_shift == 0:
                 barrier_shift = step
 
-    for i in xrange(0, h[0]):
+    for i in range(0, h[0]):
         list_to_sort.pop()
 
     return list_to_sort
 
 
 # Floyd shift
-def sift(l, r, array):
+def shift(l, r, array):
 
     i = l
-    j = 2 * l + 1
+    j = int(2 * l + 1)
     x = array[l]
 
     if j < r and array[j] < array[j + 1]:
@@ -191,14 +191,14 @@ def heap_sort(list_to_sort):
 
     n = len(list_to_sort)
 
-    l = n / 2 + 1
+    l = n // 2 + 1
     r = n - 1
 
     # seap left part of the input list, while the base level of the heap remains unordered
     while l > 0:
 
         l -= 1
-        sift(l, r, list_to_sort)
+        shift(l, r, list_to_sort)
 
     # seap each element of the base level of the heap one by one, to make tree fully ordered;
     while r > 0:
@@ -207,7 +207,7 @@ def heap_sort(list_to_sort):
         list_to_sort[0] = list_to_sort[r]
         list_to_sort[r] = x
         r -= 1
-        sift(l, r, list_to_sort)
+        shift(l, r, list_to_sort)
 
     return list_to_sort
 
@@ -218,7 +218,7 @@ def quick_sort(list_to_sort):
 
         i = l
         j = r
-        x = list_to_sort[(l + r) / 2]
+        x = list_to_sort[(l + r) // 2]
 
         while i <= j:
 
@@ -260,7 +260,7 @@ def quick_sort_non_recursive(list_to_sort):
         while l < r:
             i = l
             j = r
-            x = list_to_sort[(l + r)/2]
+            x = list_to_sort[(l + r)//2]
 
             while i <= j:
 
@@ -297,7 +297,7 @@ if __name__ == '__main__':
 
     import os
 
-    tester = SortingTester(min_len_log_2=10, max_len_log_2=13)
+    tester = SortingTester(min_len_log_2=10, max_len_log_2=10)
 
     tester.run([
         straight_insertion,
@@ -312,9 +312,11 @@ if __name__ == '__main__':
         built_in_sort
     ])
 
-    # # tester.print_results()
-    # tester.csv_to_file("d:/sort_results.csv")
-    tester.write_to_db(os.path.dirname(__file__) + "/result_db.accdb")
+    out_dir = os.path.dirname(__file__)
+
+    # tester.print_results()
+    tester.csv_to_file(os.path.join(out_dir, 'sort_results.csv'))
+    # tester.write_to_db(os.path.join(os.path.dirname(__file__), + 'result_db.accdb'))
 
 
 

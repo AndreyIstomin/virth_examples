@@ -1,12 +1,13 @@
 import time
 
+
 def preprocess(pattern):
 
     pattern_length = len(pattern)
 
     d = {}
 
-    for i in xrange(0, pattern_length):
+    for i in range(0, pattern_length):
 
         d[pattern[i - 1]] = pattern_length - i
 
@@ -19,7 +20,7 @@ def preprocess_2(pattern):
 
     arr = [pattern_length] * 256
 
-    for i in xrange(0, pattern_length):
+    for i in range(0, pattern_length):
 
         arr[ord(pattern[i - 1])] = pattern_length - i
 
@@ -83,19 +84,19 @@ if __name__ == '__main__':
 
     t = time.time()
 
-    for i in xrange(1000000):
+    for i in range(1000000):
         run('atataatametaatatadata', table, pattern)
 
-    print 'dictionary approach: %f s' % (time.time() - t) # faster
+    print('dictionary approach: %f s' % (time.time() - t)) # faster
 
     arr = preprocess_2(pattern)
 
     t = time.time()
 
-    for i in xrange(1000000):
+    for i in range(1000000):
         run_2('atataatametaatatadata', arr, pattern)
 
-    print 'array approach: %f s' % (time.time() - t)
+    print('array approach: %f s' % (time.time() - t))
 
 
 

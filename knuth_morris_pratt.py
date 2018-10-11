@@ -5,7 +5,7 @@ def prepare_kmp(pattern):
     prefix_func = [0] * (len(pattern) - 1)# by default prefix func for one element string is zero
 
     # loop over each substring except the first one (one element string)
-    for last_element_in_substr in xrange(1, len(pattern) - 1):
+    for last_element_in_substr in range(1, len(pattern) - 1):
 
         prev_prefix = prefix_func[last_element_in_substr - 1] # get prefix func value for prev substr
 
@@ -27,7 +27,7 @@ def prepare_kmp(pattern):
 
             prefix_func[last_element_in_substr] = 0
 
-    for i in xrange(0, len(pattern) - 1):
+    for i in range(0, len(pattern) - 1):
 
         if prefix_func[i] == 0 and pattern[0] == pattern[i + 1]:
             prefix_func[i] = -1
@@ -48,10 +48,10 @@ def run_kmp(text, pattern, prefix_func):
             text_symbol = text[text_index]
             pattern_symbol = pattern[pattern_index]
             not_equal = text[text_index] != pattern[pattern_index]
-            print text
-            print '%s%s' % (' ' * (text_index - pattern_index), pattern)
+            print(text)
+            print('%s%s' % (' ' * (text_index - pattern_index), pattern))
             if not_equal:
-                print '%s^ (%s != %s)' % (' ' * text_index, text_symbol, pattern_symbol)
+                print('%s^ (%s != %s)' % (' ' * text_index, text_symbol, pattern_symbol))
             ##############################################################################
 
             # lets check the same for the prefix:
@@ -66,10 +66,10 @@ def run_kmp(text, pattern, prefix_func):
             text_symbol = text[text_index]
             pattern_symbol = pattern[pattern_index]
             not_equal = text[text_index] != pattern[pattern_index]
-            print text
-            print '%s%s' % (' ' * (text_index - pattern_index), pattern)
+            print(text)
+            print('%s%s' % (' ' * (text_index - pattern_index), pattern))
             if not_equal:
-                print '%s^ (%s != %s)' % (' ' * text_index, text_symbol, pattern_symbol)
+                print('%s^ (%s != %s)' % (' ' * text_index, text_symbol, pattern_symbol))
             ##############################################################################
 
         if pattern_index == len(pattern):
@@ -87,6 +87,6 @@ if __name__ == "__main__":
     pattern = 'abcabc'
     prefix_func = prepare_kmp(pattern + ' ')
 
-    print prefix_func
+    print(prefix_func)
 
     run_kmp('abcbadabababcaabcabcabd', pattern, prefix_func)

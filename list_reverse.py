@@ -71,9 +71,9 @@ if __name__ == "__main__":
     ll.add(4)
     ll.add(5)
 
-    print str(ll)
+    print(str(ll))
 
     ll.reverse_recursive()
 
-    print "reversed: %s" % str(ll)
+    print(f'reversed: {ll}')
 
